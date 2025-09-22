@@ -5,6 +5,7 @@ import './App.css';
 function App() {
     const [patients, setPatients] = useState([]);
     const [newPatient, setNewPatient] = useState({ name: '', dob: '', gender: '' });
+    const [editingPatient, setEditingPatient] = useState(null);
 
     useEffect(() => {
         fetchPatients();
@@ -26,12 +27,31 @@ function App() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/patients/add', newPatient);
+            if (editingPatient) {
+                await axios.put(`http://localhost:5000/patients/${editingPatient._id}`, newPatient);
+                setEditingPatient(null);
+            } else {
+                await axios.post('http://localhost:5000/patients/add', newPatient);
+            }
             setNewPatient({ name: '', dob: '', gender: '' });
             fetchPatients();
         } catch (err) {
-            console.error("Gagal menambahkan pasien:", err);
+            console.error("Gagal menyimpan pasien:", err);
         }
+    };
+    
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/patients/${id}`);
+            fetchPatients(); 
+        } catch (err) {
+            console.error("Gagal menghapus pasien:", err);
+        }
+    };
+
+    const handleEdit = (patient) => {
+        setNewPatient({ name: patient.name, dob: patient.dob.substring(0, 10), gender: patient.gender });
+        setEditingPatient(patient);
     };
 
     return (
@@ -39,7 +59,7 @@ function App() {
             <h1>Rekam Medis Sederhana</h1>
 
             <div className="form-section">
-                <h2>Tambah Pasien Baru</h2>
+                <h2>{editingPatient ? 'Ubah Data Pasien' : 'Tambah Pasien Baru'}</h2>
                 <form onSubmit={handleSubmit}>
                     <input type="text" name="name" placeholder="Nama Pasien" value={newPatient.name} onChange={handleInputChange} required />
                     <input type="date" name="dob" value={newPatient.dob} onChange={handleInputChange} required />
@@ -48,7 +68,7 @@ function App() {
                         <option value="Laki-laki">Laki-laki</option>
                         <option value="Perempuan">Perempuan</option>
                     </select>
-                    <button type="submit">Tambah Pasien</button>
+                    <button type="submit">{editingPatient ? 'Simpan Perubahan' : 'Tambah Pasien'}</button>
                 </form>
             </div>
 
@@ -57,9 +77,15 @@ function App() {
                 <ul>
                     {patients.map(patient => (
                         <li key={patient._id}>
-                            <strong>{patient.name}</strong> - {new Date(patient.dob).toLocaleDateString()} ({patient.gender})
-                            <div className="visit-count">
-                                Total Kunjungan: {patient.visits.length}
+                            <div>
+                                <strong>{patient.name}</strong> - {new Date(patient.dob).toLocaleDateString()} ({patient.gender})
+                                <div className="visit-count">
+                                    Total Kunjungan: {patient.visits.length}
+                                </div>
+                            </div>
+                            <div>
+                                <button className="edit-btn" onClick={() => handleEdit(patient)}>Ubah</button>
+                                <button className="delete-btn" onClick={() => handleDelete(patient._id)}>Hapus</button>
                             </div>
                         </li>
                     ))}

@@ -50,3 +50,21 @@ li {
   border-radius: 20px;
   font-size: 0.8em;
 }
+
+/* Tambahan styling untuk tombol Hapus dan Ubah */
+.edit-btn, .delete-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.edit-btn {
+  background-color: #ffc107; /* Warna kuning */
+  margin-right: 10px; /* Jarak antara tombol */
+}
+
+.delete-btn {
+  background-color: #dc3545; /* Warna merah */
+}
