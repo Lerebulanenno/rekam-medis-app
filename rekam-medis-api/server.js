@@ -14,7 +14,10 @@ mongoose.connect(uri)
     .then(() => console.log("Berhasil terhubung ke MongoDB"))
     .catch(err => console.log("Gagal terhubung ke MongoDB:", err));
 
-// Rute API akan ditambahkan di sini
+// --- Tambahkan kode ini di sini ---
+const patientsRouter = require('./routes/patients');
+app.use('/patients', patientsRouter);
+// --- Akhir kode tambahan ---
 
 app.listen(PORT, () => {
     console.log(`Server berjalan di port: ${PORT}`);

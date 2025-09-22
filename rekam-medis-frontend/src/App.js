@@ -27,11 +27,19 @@ function App() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Mengirim data ke backend dengan format tanggal yang benar
+            const patientData = {
+                ...newPatient,
+                dob: new Date(newPatient.dob)
+            };
+
             if (editingPatient) {
-                await axios.put(`http://localhost:5000/patients/${editingPatient._id}`, newPatient);
+                // Perbaiki baris ini
+                await axios.put(`http://localhost:5000/patients/${editingPatient._id}`, patientData);
                 setEditingPatient(null);
             } else {
-                await axios.post('http://localhost:5000/patients/add', newPatient);
+                // Perbaiki baris ini
+                await axios.post('http://localhost:5000/patients/add', patientData);
             }
             setNewPatient({ name: '', dob: '', gender: '' });
             fetchPatients();
