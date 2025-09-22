@@ -37,4 +37,19 @@ router.route('/:id').delete((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+// Tambahkan rute PUT di sini untuk memperbarui data
+router.route('/:id').put((req, res) => {
+    Patient.findById(req.params.id)
+        .then(patient => {
+            patient.name = req.body.name;
+            patient.dob = req.body.dob;
+            patient.gender = req.body.gender;
+
+            patient.save()
+                .then(() => res.json('Pasien berhasil diubah!'))
+                .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
 module.exports = router;
